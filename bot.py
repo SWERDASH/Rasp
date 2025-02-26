@@ -1,8 +1,18 @@
-import telebot, urllib3
+import telebot, requests
 from telebot import types
 import datetime
 import re
 from pdf2image import convert_from_bytes
+
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:135.0) Gecko/20100101 Firefox/135.0"
+}
+
+proxies = {
+    'http': '5.128.15.152:3128',
+    'https': '5.128.15.152:3128',
+}
+
 pathP = r".\poppler-24.08.0\Library\bin"
 tempPath = r".\temp"
 usecount = 65
@@ -120,7 +130,7 @@ def send_exact(callback):
             bot.send_message(message.chat.id, "Неверный формат")
 
 def exists(url):
-    if url.status >= 200 and url.status < 400:
+    if 200 <= url.status_code < 400:
         return True
     else:
         return False
@@ -133,9 +143,9 @@ import os
 
 def imgExactGet(textr, callback):
     add = 0
-    url = urllib3.request("GET", f'https://gimn25.eduface.ru/uploads/62400/62391/section/2192375/{current(0, 0, textr)}_{current(2, 0, textr)}_2025_goda__{current(1, 0, textr)}_.pdf')
+    url = requests.get(f'https://gimn25.eduface.ru/uploads/62400/62391/section/2192375/{current(0, 0, textr)}_{current(2, 0, textr)}_2025_goda__{current(1, 0, textr)}_.pdf', proxies=proxies, stream=True)
     if exists(url):
-        img = convert_from_bytes(url.data, poppler_path=pathP)
+        img = convert_from_bytes(url.raw.data, poppler_path=pathP)
         img_name=f"img-{current(0, add, textr)}-{current(2, 0, textr)}-{current(1, 0, textr)}.jpeg"
         img[1].save(os.path.join(tempPath, img_name), "JPEG")
         button = types.InlineKeyboardMarkup()
@@ -146,18 +156,18 @@ def imgExactGet(textr, callback):
 
 def imgExactDel(textr):
     add = 0
-    url = urllib3.request("GET", f'https://gimn25.eduface.ru/uploads/62400/62391/section/2192375/{current(0, 0, textr)}_{current(2, 0, textr)}_2025_goda__{current(1, 0, textr)}_.pdf')
+    url = requests.get(f'https://gimn25.eduface.ru/uploads/62400/62391/section/2192375/{current(0, 0, textr)}_{current(2, 0, textr)}_2025_goda__{current(1, 0, textr)}_.pdf', proxies=proxies, stream=True)
     if exists(url):
-        img = convert_from_bytes(url.data, poppler_path=pathP)
+        img = convert_from_bytes(url.raw.data, poppler_path=pathP)
         img_name=f"img-{current(0, add, textr)}-{current(2, 0, textr)}-{current(1, 0, textr)}.jpeg"
         os.remove(f"./temp/{img_name}")
 
 def imgGet(add, callback):
-    url = urllib3.request("GET", f'https://gimn25.eduface.ru/uploads/62400/62391/section/2192375/{current(0, add, 0)}_{current(2, add, 0)}_2025_goda__{current(1, add, 0)}_.pdf')
+    url = requests.get(f'https://gimn25.eduface.ru/uploads/62400/62391/section/2192375/{current(0, add, 0)}_{current(2, add, 0)}_2025_goda__{current(1, add, 0)}_.pdf', proxies=proxies, stream=True)
     if exists(url):
         t = datetime.datetime.now()
         tt = t + datetime.timedelta(days=add)
-        img = convert_from_bytes(url.data, poppler_path=pathP)
+        img = convert_from_bytes(url.raw.data, poppler_path=pathP)
         img_name=f"img-{current(0, add, 0)}-{current(2, add, 0)}-{current(1, add, 0)}.jpeg"
         img[1].save(os.path.join(tempPath, img_name), "JPEG")
         bot.delete_message(callback.message.chat.id, callback.message.message_id)
@@ -169,9 +179,9 @@ def imgGet(add, callback):
 
 
 def imgDel(add):
-    url = urllib3.request("GET", f'https://gimn25.eduface.ru/uploads/62400/62391/section/2192375/{current(0, add, 0)}_{current(2, add, 0)}_2025_goda__{current(1, add, 0)}_.pdf')
+    url = requests.get(f'https://gimn25.eduface.ru/uploads/62400/62391/section/2192375/{current(0, add, 0)}_{current(2, add, 0)}_2025_goda__{current(1, add, 0)}_.pdf', proxies=proxies, stream=True)
     if exists(url):
-        img = convert_from_bytes(url.data, poppler_path=pathP)
+        img = convert_from_bytes(url.raw.data, poppler_path=pathP)
         img_name=f"img-{current(0, add, 0)}-{current(2, add, 0)}-{current(1, add, 0)}.jpeg"
         os.remove(f"./temp/{img_name}")
 
